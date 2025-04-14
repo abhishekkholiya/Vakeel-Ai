@@ -1,20 +1,50 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import styles from "@/styles/Login.module.css";
-import { useEffect, useState } from "react";
-import Typed from "react-typed";
+import React, { useEffect, useState } from "react";
+import { ReactTyped } from "react-typed";
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/router";
 
-const geist = Geist({
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login, signup, googleSignIn } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await signup(email, password);
+      }
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await googleSignIn();
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <>
@@ -24,21 +54,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={`${styles.container} ${geist.className}`}>
-        <div className={styles.loginCard}>
-          <div className={styles.logo}>
-            <Image
-              src="/vakeel-logo.svg"
-              alt="Vakeel AI Logo"
-              width={120}
-              height={120}
-              priority
-            />
-          </div>
-          <h1 className={styles.title}>Welcome to Vakeel AI</h1>
+      <div className={styles.container}>
+        <div className={styles.leftSection}>
+          <h1 className={styles.title}>Draft an email to request legal advice</h1>
           {mounted && (
             <div className={styles.typingText}>
-              <Typed
+              <ReactTyped
                 strings={[
                   "Your AI-powered legal assistant",
                   "Get instant legal advice",
@@ -51,13 +72,64 @@ export default function Home() {
               />
             </div>
           )}
-          <div className={styles.buttonContainer}>
-            <button className={`${styles.button} ${styles.primaryButton}`}>
-              Sign In
-            </button>
-            <button className={`${styles.button} ${styles.secondaryButton}`}>
-              Create Account
-            </button>
+        </div>
+        <div className={styles.rightSection}>
+          <div className={styles.loginCard}>
+            <div className={styles.logo}>
+              <Image
+                src="/vakeel-logo.svg"
+                alt="Vakeel AI Logo"
+                width={120}
+                height={120}
+                priority
+              />
+            </div>
+            <h2 className={styles.subtitle}>
+              {isLogin ? "Log in" : "Sign up"}
+            </h2>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {error && <div className={styles.error}>{error}</div>}
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={styles.input}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+                required
+              />
+              <div className={styles.buttonContainer}>
+                <button
+                  type="submit"
+                  className={`${styles.button} ${styles.primaryButton}`}
+                >
+                  {isLogin ? "Sign In" : "Create Account"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className={`${styles.button} ${styles.secondaryButton}`}
+                >
+                  {isLogin
+                    ? "Need an account? Sign up"
+                    : "Already have an account? Sign in"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  className={`${styles.button} ${styles.googleButton}`}
+                >
+                  Sign in with Google
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

@@ -1,21 +1,41 @@
-:root {
-  --primary-color: #10a37f;
-  --primary-hover: #1a7f64;
-  --text-color: #c5c5d2;
-  --background-dark: #0f0f0f;
-  --card-background: #1a1a1a;
-  --border-color: #2f2f2f;
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background-dark);
+  color: var(--text-color);
 }
 
-.container {
-  min-height: 100vh;
+.leftSection {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-dark);
-  color: var(--text-color);
   padding: 2rem;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.leftSection .title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.typingText {
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--card-background);
 }
 
 .loginCard {
@@ -28,24 +48,38 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.title {
-  font-size: 2rem;
+.subtitle {
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
-  color: #ffffff;
+  color: var(--foreground);
 }
 
-.typingText {
-  text-align: center;
-  margin-bottom: 2rem;
-  min-height: 48px;
+.form {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.1);
   color: var(--text-color);
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.error {
+  color: #ff4444;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .buttonContainer {
@@ -82,6 +116,23 @@
 
 .secondaryButton:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.googleButton {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+}
+
+.googleButton:hover {
+  background-color: #357ae8;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem; /* Add spacing below the logo */
 }
 
 @media (max-width: 600px) {

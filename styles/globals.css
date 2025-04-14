@@ -1,6 +1,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-color: #10a37f;
+  --primary-hover: #1a7f64;
+  --text-color: #c5c5d2;
+  --background-dark: #0f0f0f;
+  --card-background: #1a1a1a;
+  --border-color: #2f2f2f;
 }
 
 @media (prefers-color-scheme: dark) {
