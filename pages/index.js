@@ -28,7 +28,7 @@ export default function Home() {
         <div className={styles.loginCard}>
           <div className={styles.logo}>
             <Image
-              src="/vercel.svg"
+              src="/vakeel-logo.svg"
               alt="Vakeel AI Logo"
               width={120}
               height={120}
