@@ -147,6 +147,21 @@
   .googleButton:hover {
     background-color: #357ae8;
   }
+
+  .imagePreviewContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  .imagePreview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+  }
   
   .logo {
     display: flex;

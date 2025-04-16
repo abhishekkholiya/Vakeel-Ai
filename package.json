@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "firebase": "^11.6.0",
+    "mongoose": "^8.13.2",
     "motion": "^12.6.5",
     "next": "15.3.0",
     "react": "^19.0.0",
