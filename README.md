@@ -1,4 +1,4 @@
-#Vakeel AI  
+#Vakeel AI  (deployment link - https://vercel.com/abhishek1501kholiyas-projects/vakeel-ai/E812jcwkfEUyTYzEcNRCdfzdE86S)
 The legal assistant you never knew but always wanted  
 
 ##Key Features  
@@ -16,5 +16,6 @@ The legal assistant you never knew but always wanted
 - Common Man (0 rupees per month)  
 - Attorney's plan (499 per month)  
 - Enterprise's plan (399 per member)  
+
 
 Made with love by ashish nagar and abhishek kholiya
