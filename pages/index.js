@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import { ReactTyped } from "react-typed";
 import * as motion from 'motion/react-client';
 import Footer from "./components/Footer";
+import { useRouter } from 'next/router';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
+  const router = useRouter();
   return (
     <>
         <Head>
@@ -45,7 +47,7 @@ export default function Home() {
                                 </div>
                                 <h2 className={styles.main_sub_header}>democratising law <br/> knowledge & 🔍 research </h2>
 
-                                <div className={styles.main_action_button}>
+                                <div className={styles.main_action_button} onClick={() => router.push('/SignUp')}>
                                     <p className={styles.main_action_button_text}>Try Now</p>
                                 </div>
                             

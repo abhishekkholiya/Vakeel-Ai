@@ -15,7 +15,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, signup, googleSignIn } = useAuth();
+  const { login, signup, googleSignIn, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -28,10 +28,11 @@ export default function SignUp() {
     try {
       if (isLogin) {
         await login(email, password);
+        router.push("/chat");
       } else {
         await signup(email, password);
+        router.push("/profile-setup");
       }
-      router.push("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -40,7 +41,7 @@ export default function SignUp() {
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
-      router.push("/dashboard");
+      router.push("/profile-setup");
     } catch (err) {
       setError(err.message);
     }
