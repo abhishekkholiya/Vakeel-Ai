@@ -10,7 +10,6 @@ export default function ProfileSetup() {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
-    profilePicture: null,
     dateOfBirth: '',
   });
   const [loading, setLoading] = useState(false);
@@ -27,12 +26,7 @@ export default function ProfileSetup() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, profilePicture: file }));
-    }
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,17 +34,18 @@ export default function ProfileSetup() {
     setError('');
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('username', formData.username);
-      formDataToSend.append('dateOfBirth', formData.dateOfBirth);
-      if (formData.profilePicture) {
-        formDataToSend.append('profilePicture', formData.profilePicture);
-      }
-      formDataToSend.append('firebaseUid', user.uid);
+      const formDataToSend = {
+        username: formData.username,
+        dateOfBirth: formData.dateOfBirth,
+        firebaseUid: user.uid
+      };
 
       const response = await fetch('/api/users/profile', {
         method: 'POST',
-        body: formDataToSend,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formDataToSend),
       });
 
       if (!response.ok) {
@@ -116,23 +111,6 @@ export default function ProfileSetup() {
               />
             </div>
 
-            <div className={styles.inputGroup}>
-              <label htmlFor="profilePicture" className={`${styles.button} ${styles.uploadButton}`}>
-                {formData.profilePicture ? 'Change Image' : 'Upload Profile Picture'}
-              </label>
-              <input
-                type="file"
-                id="profilePicture"
-                name="profilePicture"
-                accept="image/*"
-                onChange={handleFileChange}
-                className={styles.hiddenInput}
-                style={{ display: 'none' }}
-              />
-              {formData.profilePicture && (
-                <p className={styles.fileName}>{formData.profilePicture.name}</p>
-              )}
-            </div>
 
             <div className={styles.inputGroup}>
               <input
