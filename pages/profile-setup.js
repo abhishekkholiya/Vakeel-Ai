@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Login.module.css';
 import { ReactTyped } from "react-typed";
 

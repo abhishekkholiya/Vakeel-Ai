@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Login.module.css";
 import React, { useEffect, useState } from "react";
 import { ReactTyped } from "react-typed";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
