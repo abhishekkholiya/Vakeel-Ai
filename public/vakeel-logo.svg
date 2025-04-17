@@ -1,0 +1,6 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 20L95 45V45L60 70L25 45L60 20Z" fill="black"/>
+  <path d="M40 45V90L60 100L80 90V45" fill="black"/>
+  <path d="M60 70V100" stroke="white" stroke-width="2"/>
+  <path d="M40 45L60 55L80 45" stroke="white" stroke-width="2"/>
+</svg>
