@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cloudinary": "^2.0.1",
     "firebase": "^11.6.0",
+    "formidable": "^3.5.1",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.1",
     "motion": "^12.6.5",
     "next": "15.3.0",
     "react": "^19.0.0",
