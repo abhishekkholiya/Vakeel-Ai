@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^0.8.0",
     "cloudinary": "^2.0.1",
     "firebase": "^11.6.0",
     "formidable": "^3.5.1",
@@ -18,6 +19,7 @@
     "next": "15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
     "react-typed": "^2.0.12"
   },
   "devDependencies": {
