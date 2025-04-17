@@ -1,4 +1,4 @@
-import styles from '@/styles/ChatRoom.module.css';
+import styles from '../../styles/chatRoom.module.css';
 import { useState } from 'react';
 import Head from 'next/head';
 import { GoogleGenAI, GoogleGenerativeAI } from "@google/genai";
