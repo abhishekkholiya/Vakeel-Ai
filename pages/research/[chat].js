@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { GoogleGenAI, GoogleGenerativeAI } from "@google/genai";
 const genAI = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API });
 import Markdown from 'react-markdown';
-export default function chat(){
+export default function Chat(){
 
     const [query,setQuery] = useState('');
     const [messages,setMessages] = useState(null);
