@@ -28,10 +28,31 @@ export default function SignUp() {
     try {
       if (isLogin) {
         await login(email, password);
+        router.push("/dashboard");
       } else {
-        await signup(email, password);
+        const userCredential = await signup(email, password);
+        const { user } = userCredential;
+        
+        // Create user in MongoDB
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: user.email,
+            username: user.email.split('@')[0], // Default username from email
+            firebaseUid: user.uid,
+            dateOfBirth: new Date().toISOString() // Default date, will be updated in onboarding
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create user profile');
+        }
+
+        router.push("/Onboarding");
       }
-      router.push("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -39,8 +60,33 @@ export default function SignUp() {
 
   const handleGoogleSignIn = async () => {
     try {
-      await googleSignIn();
-      router.push("/dashboard");
+      const result = await googleSignIn();
+      const { user } = result;
+
+      // Create user in MongoDB
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          username: user.displayName || user.email.split('@')[0],
+          firebaseUid: user.uid,
+          dateOfBirth: new Date().toISOString() // Default date, will be updated in onboarding
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 409) {
+          router.push("/dashboard"); // User already exists, go to dashboard
+          return;
+        }
+        throw new Error(data.error || 'Failed to create user profile');
+      }
+
+      router.push("/Onboarding");
     } catch (err) {
       setError(err.message);
     }

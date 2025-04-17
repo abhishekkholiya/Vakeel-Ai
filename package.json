@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "firebase": "^11.6.0",
+    "mongoose": "^8.13.2",
     "motion": "^12.6.5",
     "next": "15.3.0",
     "react": "^19.0.0",
@@ -20,5 +22,19 @@
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
     "eslint-config-next": "15.3.0"
+=======
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.14",
+    "firebase": "^10.9.0",
+    "next": "14.1.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-typed": "^2.0.12"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.1.4"
+>>>>>>> af91508c8e16bd48362bf33da3169e58c9a5b667
   }
 }
