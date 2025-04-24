@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from '../../../models/User';
+import User from '@/models/user.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -7,7 +7,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("MONGODB_URI =>", process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+    await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
 
     const { username, dateOfBirth, firebaseUid } = req.body;
 
@@ -24,12 +25,20 @@ export default async function handler(req, res) {
 
     // Create new user document
     const user = new User({
-      firebaseUid,
-      username,
+      firebaseUid:firebaseUid,
+      username:username,
       dateOfBirth: new Date(dateOfBirth),
-      profilePicture: ''}); // Empty string for profile picture
+      profilePicture: '',
+      // conversations:[{
+      //   title:'welcome',
+      //   language:'english',
+      //   timestamp: new Date()
+        
+      // }]
+    }); // Empty string for profile picture
 
     await user.save();
+    console.log('user saved',user);
 
     res.status(201).json({ message: 'Profile created successfully', user });
   } catch (error) {

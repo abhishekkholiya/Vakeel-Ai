@@ -7,6 +7,9 @@ import { ReactTyped } from "react-typed";
 import * as motion from 'motion/react-client';
 import Footer from "./components/Footer";
 import { useRouter } from 'next/router';
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,6 +22,41 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const router = useRouter();
+  const {user} = useAuth();
+
+  useEffect( ()=>{
+     
+    const getUser = async ()=>{
+      if(user){
+        console.log("here");
+        const [userDataResponse] = await Promise.all([
+          fetch(`/api/users/getuser?userUID=${user.uid}`),
+        ]);
+        const userData = await userDataResponse.json();
+        if(userDataResponse.ok && user){
+            router.push("/research/hello");
+        }else{
+          router.push("/SignUp");
+        } 
+      }
+    }
+    getUser();
+   
+    // const interval = setInterval(()=>{
+    //     setTextIndex((prevIndex)=> {
+    //       if(prevIndex + 1 < texts.length){
+    //         return prevIndex + 1;
+    //       }else{
+    //         return 0;
+    //       }
+    //     });
+    // },2000);
+    // return ()=> clearInterval(interval)
+
+   
+  },[]);
+
+
   return (
     <>
         <Head>

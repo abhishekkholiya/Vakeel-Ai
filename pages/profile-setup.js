@@ -52,7 +52,7 @@ export default function ProfileSetup() {
         throw new Error('Failed to save profile');
       }
 
-      router.push('/chat'); // Redirect to chat interface after successful setup
+      router.push('/research/chat'); // Redirect to chat interface after successful setup
     } catch (err) {
       setError(err.message);
     } finally {

@@ -28,7 +28,7 @@ export default function SignUp() {
     try {
       if (isLogin) {
         await login(email, password);
-        router.push("/chat");
+        router.push("/research/chat");
       } else {
         await signup(email, password);
         router.push("/profile-setup");
@@ -57,12 +57,12 @@ export default function SignUp() {
       </Head>
         <div className={styles.container}>
                 <div className={styles.leftSection}>
-                        <h1 className={styles.title}>Your legal AI assistant</h1>
+                        <h1 className={styles.title}>Your AI legal assistant</h1>
                         {mounted && (
                             <div className={styles.typingText}>
                             <ReactTyped
                                 strings={[
-                                "Your AI-powered legal assistant",
+                                "Ask your queries in simple langauge",
                                 "Get instant legal advice",
                                 "Analyze legal documents efficiently",
                                 "Stay compliant with ease",
