@@ -21,6 +21,7 @@ export default function Chat(){
     const [transcript,setTranscript] = useState('Hi Vakeel');
 
     const recognitionRef = useState(null);
+    const [draftScreen,setDraftScreen] = useState(false);
     
 
     const [voiceMode,setVoiceMode] = useState(false);
@@ -522,16 +523,16 @@ export default function Chat(){
                
                 if(askAI){
 
-                            recognition.stop();
-                           
-                          
-                            const utterance = new SpeechSynthesisUtterance(askAI);
-                            utterance.lang = 'en-US';
-                            speechSynthesis.speak(utterance);
+                    recognition.stop();
+                    
+                    
+                    const utterance = new SpeechSynthesisUtterance(askAI);
+                    utterance.lang = 'en-US';
+                    speechSynthesis.speak(utterance);
                            
 
             
-                    }
+                }
     
         
             };
@@ -711,7 +712,7 @@ export default function Chat(){
                                                         <img src={'/plus.png'} width={35} height={35}/>
                                                     </button>
 
-                                                    <button className={styles.rightSection_inputDiv_draftButton}>
+                                                    <button className={styles.rightSection_inputDiv_draftButton} onClick={()=>setDraftScreen(!draftScreen)}>
                                                             <img src={'/legal_work.png'} className={styles.draftButton_image} width={20} height={20}/>
                                                             <p className={styles.draftButton_text}>legal draft</p>
                                                     </button>
