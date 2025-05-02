@@ -394,7 +394,9 @@
             margin-left: 0.5rem;
         }
 
-        .rightSection_inputDiv_document_button{
+      
+
+        .rightSection_inputDiv_tools{
             width: 100%;
             min-height: 50%;
            
@@ -403,12 +405,18 @@
             align-items: center;
             padding-bottom: 0.5rem;
             flex-direction: row;
-            /* padding-top: 0.5rem; */
+        }
+        .rightSection_inputDiv_tools_left{
+            width: 50%;
+            height: 100%;
            
+            display: flex;
+            flex-direction: row;
         }
         .rightSection_inputDiv_file{
             display: none;
         }
+
         .rightSection_inputDiv_button{
             border: none;
             background: transparent;
@@ -416,13 +424,50 @@
             margin-left: 0.5rem;
            
            
+           
         }
+
+      
+
+        .rightSection_inputDiv_draftButton{
+            margin-left: 0.8rem;
+            width: auto;
+            border-radius: 15px;
+            min-height: 100%;
+            border: 2px solid black;
+            background: transparent;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content:center;
+            color: black;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+       
+        .draftButton_text{
+            margin-left: 0.5rem;
+            font-size: 1rem;
+        }
+
+     
+        .rightSection_inputDiv_tools_right{
+            display: flex;
+            flex-direction: row-reverse;
+          
+            min-width: 50%;
+            min-height: 100%;
+            padding-right: 1rem;
+        }
+
+
         .rightSection_inputDiv_voiceButton{
          
             border: none;
             background: transparent;
             cursor: pointer;
-            margin-left: 0.8rem;
+          
             padding:2px;
            
         }
@@ -462,9 +507,110 @@
             font-size: 1.2rem;
         }
 
-       .rightSection_inputDiv_tools{
+        .voiceSection{
+            width: 25%;
+            height: 100%;
+          
+
+            background-color: rgb(255, 255,255,0.4);
+            color: black;
+        }
+
+        .voiceSection_header{
+          
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+
+        .voiceSection_top{
+            width: 100%;
+            height: 8%;
+            display: flex;
+            align-items: center;
+           
+            
+        }
+
+        .voiceSection_bottom{
+            width: 100%;
+            height: 70%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+           
+        }
+
+        .voiceSection_voiceButton{
+        
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: none;
+            animation: pulse 1.2s infinite;
+            background-color: white;
+            color: black;
+            font-size: 1.2rem;
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+        
+         
+        }
+
+        .voiceSection_voiceTranscript{
+            margin-top: 4rem;
+            font-size: 1.5rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+              transform: scale(1);
+              box-shadow: 0px 8px 12px purple;
+             
+            }
+            50% {
+              transform: scale(1.2);
+              box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+            }
+          }
+
+
+        .voiceSection_controls{
+            height: 20%;
+            width: 100%;
+          
             display: flex;
             flex-direction: row;
-            border: 1px solid white;
-       }
+            justify-content: space-between;
+
+        }
+
+        .voiceSection_micButton{
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-left: 2.5rem;
+            cursor: pointer;
+        }
+        
+
+        .voiceSection_closeButton{
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            margin-right: 2.5rem;
+            cursor: pointer;
+           
+        }
+
+   
 

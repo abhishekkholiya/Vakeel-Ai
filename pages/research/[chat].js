@@ -13,7 +13,7 @@ import Link from 'next/link';
 
 
 const genAI = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API });
-
+let recognition = null;
 export default function Chat(){
 
     const router = useRouter();
@@ -24,10 +24,18 @@ export default function Chat(){
     const [userData,setUserData] = useState(null);
     const [conversations,setConversations] = useState(null);
     const [selectedFile,setSelectedFile] = useState(null);
+    const [transcript,setTranscript] = useState('Hi Vakeel');
+
+    const recognitionRef = useState(null);
+    const [isListening, setIsListening] = useState(false);
+
+    const [voiceMode,setVoiceMode] = useState(false);
 
     const [disableInput,setDisableInput] = useState(false);
 
     const [showFile,setShowFile] = useState(false);
+
+    const [mute,setMute] = useState(false);
 
   
     const {user} = useAuth();
@@ -117,9 +125,9 @@ export default function Chat(){
 
 
     //new function for intent detection powered by gpt
-    const intentDetection = async ()=>{
+    const intentDetection = async (prompt)=>{
         console.log("try to talk to the gpt");
-        let response =  await fetch(`/api/agent/getintent?query=${query}`);
+        let response =  await fetch(`/api/agent/getintent?query=${prompt}`);
         let data = await response.json();
         console.log(data);
         return data.intent;
@@ -307,6 +315,7 @@ export default function Chat(){
         
         try{
 
+            console.log('setting the ai message');
 
             console.log("trying to query the ai");
 
@@ -349,7 +358,7 @@ export default function Chat(){
                 //answer from the LLM
                 let generalText = generalResponse.text;
 
-                let newMessages;
+                let newMessages = messages;
                 let savedMessages = await saveMessage(generalText,'ai',viewMore);
 
 
@@ -357,16 +366,17 @@ export default function Chat(){
                 if(messages !== null){
  
                     //when messages array is not null
-                    newMessages  = [...messages,{content:generalText,sender:'ai',viewMore:viewMore}];
-
+                    setMessages( prev=> [...prev,{ content: generalText, sender: 'ai' }]);
                 }else{
                     
-                    newMessages = [{content:prompt,sender:'human'},{content:generalText,sender:'ai',viewMore:viewMore}];
+                    newMessages = [{content:prompt,sender:'human'},{content:caseResult,sender:'ai',viewMore:viewMore}];
+                    setMessages(newMessages);
 
                 }
                 
                 setDisableInput(false);
-                return setMessages(newMessages);
+                return generalText;
+                // return setMessages(newMessages);
 
 
 
@@ -474,6 +484,111 @@ export default function Chat(){
             }
     };
 
+
+    let speech  = ()=>{
+            // Check if the browser supports the Web Speech API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (SpeechRecognition) {
+            console.log('listening');
+            recognition = new SpeechRecognition();
+            recognition.continuous = true; // Keep listening even after recognizing a speech input
+            recognition.interimResults = false; // Only final results are processed
+            recognition.lang = 'en-US'; // Set the language to English
+            
+            recognition.onstart = () => {
+                console.log("Voice recognition started. Try saying 'Hey Jarvis'.");
+                
+            };
+            
+            recognition.onresult = async (event) => {
+                // const deviceID = typeof window !== 'undefined' ? localStorage.getItem('deviceID') : null;
+                const transcript = event.results[event.results.length - 1][0].transcript.trim();
+                setTranscript(transcript)
+                // console.log(transcript);
+
+                let currentMessages = messages;
+                if(messages !== null){
+                      console.log('first set the user message');
+                      setMessages(prev => [...prev, { content: transcript, sender: 'human' }]);
+                }else{
+                    setMessages([{ content: transcript, sender: 'human' }]);
+                }
+             
+                await  saveMessage(transcript,'human',false)
+
+                let askAI = await queryAI(transcript);
+             
+                console.log('asked ai',askAI);
+            
+                // console.log("token sent" + accessToken);
+                // let response =  await fetch(`/api/agent/getintent?query=${query}`);
+                // let data = await response.json();
+                if(askAI){
+
+                        recognition.stop();
+                        console.log("yes brother");
+                            // const utterance = new SpeechSynthesisUtterance(data.message);
+                            // utterance.lang = 'en-US';
+                            //  speechSynthesis.speak(utterance);
+                            // console.log(data);
+                            const utterance = new SpeechSynthesisUtterance(askAI);
+                            utterance.lang = 'en-US';
+                            speechSynthesis.speak(utterance);
+                           
+
+            
+                    }
+    
+        
+            };
+        
+                // recognition.onerror = (event) => {
+                //   console.error("Speech recognition error:", event.error);
+                // };
+                
+                recognition.onend = () => {
+                //  console.log("Speech recognition service disconnected.");
+                    recognition.start(); // Restart recognition if it ends
+                };
+                
+                // Start listening
+                recognition.start();
+                recognitionRef.current = recognition;
+                
+                return () => {
+                    recognition.stop(); // Stop recognition when the component unmounts
+                };
+        } else {
+             console.warn("This browser does not support the Web Speech API.");
+        }
+    }
+
+    // const startListening = () => {
+    //     if (recognitionRef.current) {
+    //         recognitionRef.current.start();
+    //         setIsListening(true);
+    //     }
+    // };
+    
+    const updateListening = (action) => {
+       console.log('action is',action);
+       console.log('recognition',recognition);
+      
+        if (action === true && recognitionRef.current) {
+            console.log("muting");
+            recognition.stop();
+            setIsListening(false);
+            setMute(!mute)
+        }else if(action === false && recognitionRef.current){
+            recognition.start();
+            console.log("unmuting");
+            setIsListening(true);
+            setMute(!mute)
+        }
+    };
+    
+
     return(
         <>
             <Head>
@@ -482,138 +597,187 @@ export default function Chat(){
             <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Istok+Web:ital,wght@0,400;0,700;1,400;1,700&family=Joan&display=swap" rel="stylesheet"></link>
             </Head>
             <div className={styles.container}>
-                <div className={styles.leftSection}>
-                    <div className={styles.leftSection_top}>
-                        <h2 className={styles.leftSection_header}>Research History</h2>
-                        <button onClick={()=>{router.push('/research/newchat'); setMessages(null);}}  className={styles.leftSection_newPage_button}>
-                                <img src={'/create.png'} width={28} height={28} className={styles.leftSection_button_image}/>
-                        </button>
-                    </div>
-                
-                    <div className={styles.leftSection_history}>
-                        {userData && conversations && conversations.map((i,index)=>{
-                            // console.log(i);
-                            return(
+                    {voiceMode === false &&
+                        <div className={styles.leftSection}>
+                            <div className={styles.leftSection_top}>
+                                <h2 className={styles.leftSection_header}>Research History</h2>
+                                <button onClick={()=>{router.push('/research/newchat'); setMessages(null);}}  className={styles.leftSection_newPage_button}>
+                                        <img src={'/create.png'} width={28} height={28} className={styles.leftSection_button_image}/>
+                                </button>
+                            </div>
                         
-                                <Link href={`/research/${i._id}`} className={styles.leftSection_history_convo}>
-                                  <p>{i.title.slice(0,25)}..</p>
-                                </Link>
-                        
-                            )
-                        })}
-                     </div>
-                        
-                </div>
-                <div className={styles.rightSection}>
-
-                        <div className={styles.rightSection_top}>
-                                <h2 className={styles.rightSection_header}>Vakeel Ai</h2>
-                                <img className={styles.rightSection_profilePicture} src='/profilepicture.png' width={40} height={40}/>
+                            <div className={styles.leftSection_history}>
+                                {userData && conversations && conversations.map((i,index)=>{
+                                    // console.log(i);
+                                    return(
+                                
+                                        <Link href={`/research/${i._id}`} className={styles.leftSection_history_convo}>
+                                        <p>{i.title.slice(0,25)}..</p>
+                                        </Link>
+                                
+                                    )
+                                })}
+                            </div>
+                                
                         </div>
+                    }
 
-                        <div className={styles.rightSection_chat}>
-                            <div className={styles.rightSection_chat_content} ref={chatDivRef}>
-                                    {messages && messages.length >= 1 &&  messages.map((i,index)=>{
-                                        return(
-                                            <>
-                                                <div className={styles.message_div}>
-                                                
-                                                    {messages[index].sender === 'human' ?
-                                                        <div className={styles.message_content}>
-                                                             <p>{messages[index].content}</p>
-                                                        </div>
-                                                        :
-                                                        <div className={styles.ai_message_div}>
-                                                          
-                                                            <div className={styles.message_content_ai_left}>
-                                                                   <img src='/shinning_black.png' width={20} height={20}/>
-                                                                   <p className={styles.message_content_ai_title}>Generated</p>
-                                                           </div>
-                                                            <p className={styles.ai_message} dangerouslySetInnerHTML={{ __html: messages[index].content }} />
-                                                           {messages[index].viewMore && <button onClick={()=>setPopUp(true)} className={styles.ai_message_more_link}>View More</button>}
-
-                                                            {popUp ?
-                                                                    <>
-                                                                        <div className={styles.popUp_container}>
-                                                                                <div className={styles.popUp_div}>
-                                                                                  {cases[cases.length - 1].title &&  <h2 className={styles.popUp_div_title}>{cases[cases.length - 1].title}</h2>}
-                                                                                   {cases[cases.length - 1].docsource && <p className={styles.popUp_div_paragraph}>Source: {cases[cases.length -1].docsource}</p>}
-                                                                                    {cases[cases.length - 1].publishdate && <p className={styles.popUp_div_paragraph}>Dated: {cases[cases.length - 1].publishdate}</p>}
-
-                                                                                    {/* <div className={styles.popUpdiv_bottom}> */}
-                                                                                        <div className={styles.popUp_div_document}>
-                                                                                            {cases[cases.length - 1].doc && <p dangerouslySetInnerHTML={{ __html: cases[cases.length -1].doc }}/>}
-                                                                                        </div>
-                                                                                        <button className={styles.popUp_div_button} onClick={()=>setPopUp(false)}>
-                                                                                            Cancel
-                                                                                        </button>
-                                                                                    {/* </div> */}
-                                                                                  
+                    <div className={styles.rightSection}>
 
 
-                                                                                </div>
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <>
-
-
-                                                                    </>
-
-                                                            }
-                                            
-                                                        </div>
-                                                     
-                                                    }
-
-
-                                                </div>
-
-                                               
-                                            
-                                            </>
-                                        )
-                                    })}
+                            <div className={styles.rightSection_top}>
+                                    <h2 className={styles.rightSection_header}>Vakeel Ai</h2>
+                                    <img className={styles.rightSection_profilePicture} src='/profilepicture.png' width={40} height={40}/>
                             </div>
 
-                           
-                        </div>
+                            <div className={styles.rightSection_chat}>
+                                <div className={styles.rightSection_chat_content} ref={chatDivRef}>
+                                        {messages && messages.length >= 1 &&  messages.map((i,index)=>{
+                                            return(
+                                                <>
+                                                    <div className={styles.message_div}>
+                                                    
+                                                        {messages[index].sender === 'human' ?
+                                                            <div className={styles.message_content}>
+                                                                    <p>{messages[index].content}</p>
+                                                            </div>
+                                                            :
+                                                            <div className={styles.ai_message_div}>
+                                                                
+                                                                <div className={styles.message_content_ai_left}>
+                                                                        <img src='/shinning_black.png' width={20} height={20}/>
+                                                                        <p className={styles.message_content_ai_title}>Generated</p>
+                                                                </div>
+                                                                <p className={styles.ai_message} dangerouslySetInnerHTML={{ __html: messages[index].content }} />
+                                                                {messages[index].viewMore && <button onClick={()=>setPopUp(true)} className={styles.ai_message_more_link}>View More</button>}
 
-                        <div className={styles.rightSection_bottom}>
-                                <div className={styles.rightSection_inputDiv} >
-                                    {selectedFile !== null && showFile && 
-                                        <div className={styles.rightSection_inputDiv_fileSection}>
-                                            <div className={styles.rightSection_inputDiv_fileDiv}>
-                                               
-                                                    <img src={'/file.png'} width={25} height={25}/>
-                                                    <p className={styles.document_name}>{selectedFile.name.slice(0,12)}..</p>
-                                              
+                                                                {popUp ?
+                                                                        <>
+                                                                            <div className={styles.popUp_container}>
+                                                                                    <div className={styles.popUp_div}>
+                                                                                        {cases[cases.length - 1].title &&  <h2 className={styles.popUp_div_title}>{cases[cases.length - 1].title}</h2>}
+                                                                                        {cases[cases.length - 1].docsource && <p className={styles.popUp_div_paragraph}>Source: {cases[cases.length -1].docsource}</p>}
+                                                                                        {cases[cases.length - 1].publishdate && <p className={styles.popUp_div_paragraph}>Dated: {cases[cases.length - 1].publishdate}</p>}
+
+                                                                                        {/* <div className={styles.popUpdiv_bottom}> */}
+                                                                                            <div className={styles.popUp_div_document}>
+                                                                                                {cases[cases.length - 1].doc && <p dangerouslySetInnerHTML={{ __html: cases[cases.length -1].doc }}/>}
+                                                                                            </div>
+                                                                                            <button className={styles.popUp_div_button} onClick={()=>setPopUp(false)}>
+                                                                                                Cancel
+                                                                                            </button>
+                                                                                        {/* </div> */}
+                                                                                        
+
+
+                                                                                    </div>
+
+                                                                            </div>
+                                                                        </>
+                                                                        :
+                                                                        <>
+
+
+                                                                        </>
+
+                                                                }
+                                                
+                                                            </div>
+                                                            
+                                                        }
+
+
+                                                    </div>
+
+                                                    
+                                                
+                                                </>
+                                            )
+                                        })}
+                                </div>
+
+                                
+                            </div>
+
+                            <div className={styles.rightSection_bottom}>
+                                    <div className={styles.rightSection_inputDiv} >
+                                        {selectedFile !== null && showFile && 
+                                            <div className={styles.rightSection_inputDiv_fileSection}>
+                                                <div className={styles.rightSection_inputDiv_fileDiv}>
+                                                    
+                                                        <img src={'/file.png'} width={25} height={25}/>
+                                                        <p className={styles.document_name}>{selectedFile.name.slice(0,12)}..</p>
+                                                    
+                                                </div>
                                             </div>
-                                        </div>
-                                    }
-                                    <textarea className={styles.rightSection_input} onChange={handleInputChange} placeholder='Research' onKeyPress={handleKeyPress} value={query} disabled={disableInput}/>
-                                 
-                                        <div className={styles.rightSection_inputDiv_document_button}>
-                                                <input type='file' className={styles.rightSection_inputDiv_file} ref={fileRef} onChange={(e)=>handleFileChange(e)}/>
-                                                <button className={styles.rightSection_inputDiv_button} onClick={()=>handleButtonChange()}>
-                                                    <img src={'/plus.png'} width={35} height={35}/>
-                                                </button>
+                                        }
+                                        <textarea className={styles.rightSection_input} onChange={handleInputChange} placeholder='Research' onKeyPress={handleKeyPress} value={query} disabled={disableInput}/>
+                                        
+                                        <div className={styles.rightSection_inputDiv_tools}>
 
-                                                <input type='file' className={styles.rightSection_inputDiv_file} ref={fileRef} onChange={(e)=>handleFileChange(e)}/>
-                                                <button className={styles.rightSection_inputDiv_voiceButton} onClick={()=>handleButtonChange()}>
+                                            <div className={styles.rightSection_inputDiv_tools_left}>
+
+                                                    <input type='file' className={styles.rightSection_inputDiv_file} ref={fileRef} onChange={(e)=>handleFileChange(e)}/>
+                                                    <button className={styles.rightSection_inputDiv_button} onClick={()=>handleButtonChange()}>
+                                                        <img src={'/plus.png'} width={35} height={35}/>
+                                                    </button>
+
+                                                    <button className={styles.rightSection_inputDiv_draftButton}>
+                                                            <img src={'/legal_work.png'} className={styles.draftButton_image} width={20} height={20}/>
+                                                            <p className={styles.draftButton_text}>legal draft</p>
+                                                    </button>
+
+                                            </div>
+
+                                            <div className={styles.rightSection_inputDiv_tools_right}>
+
+                                                
+                                                <button className={styles.rightSection_inputDiv_voiceButton} onClick={()=>setVoiceMode(!voiceMode)}>
                                                     <img src={'/sound-recognition.png'} width={30} height={30}/>
                                                 </button>
+
+                                            </div>
                                             
                                         </div>
-                                        
-                                             
                                             
-                                       
-                                    
-                                </div>
+                                                    
+                                                
+                                            
+                                        
+                                    </div>
+                            </div>
+                            
+                    </div>
+
+                    {voiceMode && 
+
+                        <div className={styles.voiceSection}>
+                                    <div className={styles.voiceSection_top}>    
+                                            <h2 className={styles.voiceSection_header}>Voice Mode</h2>
+                                    </div>
+
+                                    <div className={styles.voiceSection_bottom}>
+
+                                            <button className={styles.voiceSection_voiceButton} onClick={()=>speech()}>
+
+                                            </button>
+
+                                            <p className={styles.voiceSection_voiceTranscript}>{transcript.slice(0,45)}</p>
+
+                                    </div>
+                                    <div className={styles.voiceSection_controls}>
+                                            <button className={styles.voiceSection_micButton} onClick={()=>updateListening(!mute)}>
+                                                <img src={mute ? '/mute.png' :'/unmute.png'} width={35} height={35}/>
+                                            </button>
+
+                                            <button className={styles.voiceSection_closeButton} onClick={()=>setVoiceMode(false)}>
+                                                <img src={'/close.png'} width={35} height={35}/>
+                                            </button>
+
+                                    </div>    
                         </div>
-                </div>
+                    }
             </div>
         </>
     )
