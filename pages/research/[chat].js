@@ -7,11 +7,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-
-
-
-
-
 const genAI = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API });
 export default function Chat(){
 
@@ -26,7 +21,7 @@ export default function Chat(){
     const [transcript,setTranscript] = useState('Hi Vakeel');
 
     const recognitionRef = useState(null);
-    const [isListening, setIsListening] = useState(false);
+    
 
     const [voiceMode,setVoiceMode] = useState(false);
 
@@ -49,7 +44,7 @@ export default function Chat(){
         
         const getUser = async ()=>{
             if(user){
-                // console.log("here");
+            
                 const [userDataResponse] = await Promise.all([
                     fetch(`/api/users/getuser?userUID=${user.uid}`),
                 ]);
@@ -82,11 +77,12 @@ export default function Chat(){
     },[chat]);
 
     useEffect(()=>{
+
         const getMessages = async()=>{
-            // console.log('conversationID',chat);
+         
             const messageResponse = await fetch(`/api/messages/fetchmessage?conversationID=${chat}`);
             const messagesData = await messageResponse.json();
-            // console.log('messages from conversations',messagesData.messages[0].content);
+         
             if(messageResponse.ok && messagesData){
                 setMessages(messagesData.messages);
 
@@ -434,14 +430,14 @@ export default function Chat(){
             setDisableInput(true);
             let currentMessages = messages;
             if(currentMessages !== null){
-                // console.log("not null")
+              
                 currentMessages.push({content:newQuery,sender:'human'});
                 setMessages(currentMessages);
-               await  saveMessage(newQuery,'human',false);
+                 await  saveMessage(newQuery,'human',false);
             }else{
-                // console.log("null")
+              
                 setMessages([{content:newQuery,sender:'human'}]);
-              await  saveMessage(newQuery,'human',false);
+                await  saveMessage(newQuery,'human',false);
             }
             await queryAI(newQuery);
            
@@ -511,7 +507,7 @@ export default function Chat(){
 
                 let currentMessages = messages;
                 if(messages !== null){
-                      console.log('first set the user message');
+                    
                       setMessages(prev => [...prev, { content: transcript, sender: 'human' }]);
                 }else{
                     setMessages([{ content: transcript, sender: 'human' }]);
@@ -527,7 +523,7 @@ export default function Chat(){
                 if(askAI){
 
                             recognition.stop();
-                            console.log("yes brother");
+                           
                           
                             const utterance = new SpeechSynthesisUtterance(askAI);
                             utterance.lang = 'en-US';
@@ -563,19 +559,20 @@ export default function Chat(){
     
     
     const updateListening = (action) => {
-       console.log('action is',action);
-       console.log('recognition',recognitionRef);
+    
       
         if (action === true && recognitionRef.current) {
-            console.log("muting");
+           
             recognitionRef.current.stop();
-            setIsListening(false);
-            setMute(!mute)
+         
+            setMute(!mute);
+
         }else if(action === false && recognitionRef.current){
             recognitionRef.current.start();
             console.log("unmuting");
-            setIsListening(true);
-            setMute(!mute)
+          
+            setMute(!mute);
+
         }
     };
     
