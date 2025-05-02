@@ -485,15 +485,15 @@ export default function Chat(){
 
 
     let speech  = ()=>{
-            // Check if the browser supports the Web Speech API
+           
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (SpeechRecognition) {
             console.log('listening');
             let recognition = new SpeechRecognition();
-            recognition.continuous = true; // Keep listening even after recognizing a speech input
-            recognition.interimResults = false; // Only final results are processed
-            recognition.lang = 'en-US'; // Set the language to English
+            recognition.continuous = true; 
+            recognition.interimResults = false; 
+            recognition.lang = 'en-US'; 
 
             recognitionRef.current = recognition;
             
@@ -503,10 +503,10 @@ export default function Chat(){
             };
             
             recognition.onresult = async (event) => {
-                // const deviceID = typeof window !== 'undefined' ? localStorage.getItem('deviceID') : null;
+               
                 const transcript = event.results[event.results.length - 1][0].transcript.trim();
                 setTranscript(transcript)
-                // console.log(transcript);
+                
 
                 let currentMessages = messages;
                 if(messages !== null){
@@ -522,17 +522,12 @@ export default function Chat(){
              
                 console.log('asked ai',askAI);
             
-                // console.log("token sent" + accessToken);
-                // let response =  await fetch(`/api/agent/getintent?query=${query}`);
-                // let data = await response.json();
+               
                 if(askAI){
 
-                        recognition.stop();
-                        console.log("yes brother");
-                            // const utterance = new SpeechSynthesisUtterance(data.message);
-                            // utterance.lang = 'en-US';
-                            //  speechSynthesis.speak(utterance);
-                            // console.log(data);
+                            recognition.stop();
+                            console.log("yes brother");
+                          
                             const utterance = new SpeechSynthesisUtterance(askAI);
                             utterance.lang = 'en-US';
                             speechSynthesis.speak(utterance);
