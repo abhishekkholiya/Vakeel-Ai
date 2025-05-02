@@ -13,7 +13,6 @@ import Link from 'next/link';
 
 
 const genAI = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API });
-let recognition = null;
 export default function Chat(){
 
     const router = useRouter();
@@ -491,10 +490,12 @@ export default function Chat(){
         
         if (SpeechRecognition) {
             console.log('listening');
-            recognition = new SpeechRecognition();
+            let recognition = new SpeechRecognition();
             recognition.continuous = true; // Keep listening even after recognizing a speech input
             recognition.interimResults = false; // Only final results are processed
             recognition.lang = 'en-US'; // Set the language to English
+
+            recognitionRef.current = recognition;
             
             recognition.onstart = () => {
                 console.log("Voice recognition started. Try saying 'Hey Jarvis'.");
@@ -573,15 +574,15 @@ export default function Chat(){
     
     const updateListening = (action) => {
        console.log('action is',action);
-       console.log('recognition',recognition);
+       console.log('recognition',recognitionRef);
       
         if (action === true && recognitionRef.current) {
             console.log("muting");
-            recognition.stop();
+            recognitionRef.current.stop();
             setIsListening(false);
             setMute(!mute)
         }else if(action === false && recognitionRef.current){
-            recognition.start();
+            recognitionRef.current.start();
             console.log("unmuting");
             setIsListening(true);
             setMute(!mute)
