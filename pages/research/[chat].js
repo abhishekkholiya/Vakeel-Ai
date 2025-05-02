@@ -314,8 +314,7 @@ export default function Chat(){
         
         try{
 
-            console.log('setting the ai message');
-
+         
             console.log("trying to query the ai");
 
             let gptIntent = await intentDetection(prompt);
@@ -489,6 +488,8 @@ export default function Chat(){
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (SpeechRecognition) {
+
+
             console.log('listening');
             let recognition = new SpeechRecognition();
             recognition.continuous = true; 
@@ -539,33 +540,27 @@ export default function Chat(){
         
             };
         
-                // recognition.onerror = (event) => {
-                //   console.error("Speech recognition error:", event.error);
-                // };
+               
                 
-                recognition.onend = () => {
-                //  console.log("Speech recognition service disconnected.");
-                    recognition.start(); // Restart recognition if it ends
-                };
+            recognition.onend = () => {
+            
+                recognition.start(); // Restart recognition if it ends
+            };
                 
-                // Start listening
-                recognition.start();
-                recognitionRef.current = recognition;
-                
-                return () => {
-                    recognition.stop(); // Stop recognition when the component unmounts
-                };
+            // Start listening
+            recognition.start();
+            recognitionRef.current = recognition;
+            
+            return () => {
+                recognition.stop(); // Stop recognition when the component unmounts
+            };
+
         } else {
              console.warn("This browser does not support the Web Speech API.");
         }
     }
 
-    // const startListening = () => {
-    //     if (recognitionRef.current) {
-    //         recognitionRef.current.start();
-    //         setIsListening(true);
-    //     }
-    // };
+    
     
     const updateListening = (action) => {
        console.log('action is',action);
