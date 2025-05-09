@@ -118,20 +118,20 @@ export default function Chat(){
     },[messages,query]);
 
 
-    //function for detecting user intent
-    const detectIntent = async (prompt)=>{
+    // //function for detecting user intent
+    // const detectIntent = async (prompt)=>{
 
 
-        const intentResponse = await genAI.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: `classify the intent of the following request into (general query and, find legal case related query) use one word only ${prompt}`,
-        });
+    //     const intentResponse = await genAI.models.generateContent({
+    //         model: "gemini-2.0-flash",
+    //         contents: `classify the intent of the following request into (general query and, find legal case related query) use one word only ${prompt}`,
+    //     });
 
-        let intentText = intentResponse.text;
-        return intentText;
+    //     let intentText = intentResponse.text;
+    //     return intentText;
 
 
-    }
+    // }
 
 
     //new function for intent detection powered by gpt

@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import OpenAI from "openai";
 export default async function handler(req, res) {
-    const openai = new OpenAI({apiKey:process.env.OPENAI_KEY});
+    const openai = new OpenAI({apiKey:process.env.NEXT_PUBLIC_OPENAI_KEY});
     const request = req.query.query;
    
     async function query(data) {

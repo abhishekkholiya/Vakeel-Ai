@@ -12,8 +12,8 @@ export default function Enterprise() {
   const [members] = useState([
     { name: 'Harvey Specter', timeSpent: '20hrs spent', avatar: '/Hervey-Specter-Suit.jpg' },
     { name: 'Mike Ross', timeSpent: '10hrs spent', avatar: '/Mike-ross.jpg' },
-    { name: 'Walter White', timeSpent: '15hrs spent', avatar: '/walter white.jpg' },
-    { name: 'Saul Goodman', timeSpent: '8hrs spent', avatar: '/saul goodman.jpg' }
+    { name: 'Walter White', timeSpent: '15hrs spent', avatar: '/walter-white.png' },
+    { name: 'Saul Goodman', timeSpent: '8hrs spent', avatar: '/saul-goodman.webp' }
     
   ]);
 
@@ -24,7 +24,7 @@ export default function Enterprise() {
           <img src="/profilepicture.png" alt="Profile" className={styles.profilePic} />
           <div className={styles.welcomeText}>
             <h1>Welcome, Abhishek</h1>
-            <p>Pearson Specter's Dashboard</p>
+            <p>Pearson Specter&apos;s Dashboard</p>
           </div>
         </div>
       </div>
