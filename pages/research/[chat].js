@@ -6,9 +6,15 @@ import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import * as motion from 'motion/react-client';
+
+import useVoiceRecognition from '@/hooks/useVoiceRecognition';
+
 
 const genAI = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API });
 export default function Chat(){
+
+    const {startListening,stopListening,listening,transcription} = useVoiceRecognition();
 
     const router = useRouter();
     const [query,setQuery] = useState('');
@@ -32,12 +38,20 @@ export default function Chat(){
 
     const [mute,setMute] = useState(false);
 
+    const [legalDraftMessages,setLegalDraftMessages] = useState(null);
+
+    const [searchDraft,setSearchDraft] = useState('');
+
+    const [draftFile,setDraftFile] = useState(null);
+
   
     const {user} = useAuth();
     let {chat} = router.query;
 
     const fileRef = useRef();
     const chatDivRef = useRef();
+
+    const draftFileRef = useRef();
 
 
     useEffect( ()=>{   
@@ -87,7 +101,7 @@ export default function Chat(){
             if(messageResponse.ok && messagesData){
                 setMessages(messagesData.messages);
 
-                console.log('opening an existing conversation',chat);
+                // console.log('opening an existing conversation',chat);
                
             }
         }
@@ -122,10 +136,10 @@ export default function Chat(){
 
     //new function for intent detection powered by gpt
     const intentDetection = async (prompt)=>{
-        console.log("try to talk to the gpt");
+      
         let response =  await fetch(`/api/agent/getintent?query=${prompt}`);
         let data = await response.json();
-        console.log(data);
+        // console.log(data);
         return data.intent;
     }
 
@@ -142,7 +156,7 @@ export default function Chat(){
         if((chat === 'newchat' || chat === 'chat') && sender === 'human'){
 
                     
-                    console.log('creating a new conversation');
+                    // console.log('creating a new conversation');
 
                     let  newData = {
                         title:`${content}`,
@@ -219,19 +233,19 @@ export default function Chat(){
             
             
                         }];
-                        console.log("converstaions array",conversationsArray);
+                        // console.log("converstaions array",conversationsArray);
 
                         setConversations(conversationsArray);
                     }
 
 
                     //updated data
-                    console.log('updating current conversation',conversationData.conversation._id);
+                    // console.log('updating current conversation',conversationData.conversation._id);
                   
 
         }else{
 
-            console.log('using an existing conversation',chat); 
+            // console.log('using an existing conversation',chat); 
 
             messageData = {
                 conversationID:chat,
@@ -312,7 +326,7 @@ export default function Chat(){
         try{
 
          
-            console.log("trying to query the ai");
+            // console.log("trying to query the ai");
 
             let gptIntent = await intentDetection(prompt);
             let normalizedIntent = gptIntent.toLowerCase();
@@ -364,7 +378,7 @@ export default function Chat(){
                     setMessages( prev=> [...prev,{ content: generalText, sender: 'ai' }]);
                 }else{
                     
-                    newMessages = [{content:prompt,sender:'human'},{content:caseResult,sender:'ai',viewMore:viewMore}];
+                    newMessages = [{content:prompt,sender:'human'},{content:generalText,sender:'ai',viewMore:viewMore}];
                     setMessages(newMessages);
 
                 }
@@ -397,16 +411,16 @@ export default function Chat(){
                 let newMessages;
                 if(messages !== null){
                    
-                    newMessages  = [...messages,{content:caseResult,sender:'ai',viewMore:viewMore}];
+                    setMessages( prev=> [...prev,{ content: caseResult, sender: 'ai',viewMore:viewMore }]);
                 }else{
                    
                     newMessages = [{content:prompt,sender:'human'},{content:caseResult,sender:'ai',viewMore:viewMore}];
+                    setMessages(newMessages);
                 }
 
                 // console.log("newCases that was set:", newCases); 
                 setDisableInput(false);
-                return setMessages(newMessages);
-
+                return 'Here is what I found about the case';
 
 
             }
@@ -480,103 +494,270 @@ export default function Chat(){
     };
 
 
-    let speech  = ()=>{
+    // let speech  = ()=>{
            
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    //     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
-        if (SpeechRecognition) {
+    //     if (SpeechRecognition) {
 
 
-            console.log('listening');
-            let recognition = new SpeechRecognition();
-            recognition.continuous = true; 
-            recognition.interimResults = false; 
-            recognition.lang = 'en-US'; 
+    //         // console.log('listening');
+    //         let recognition = new SpeechRecognition();
+    //         recognition.continuous = true; 
+    //         recognition.interimResults = false; 
+    //         recognition.lang = 'en-US'; 
 
-            recognitionRef.current = recognition;
+    //         recognitionRef.current = recognition;
             
-            recognition.onstart = () => {
-                console.log("Voice recognition started. Try saying 'Hey Jarvis'.");
+    //         recognition.onstart = () => {
+    //             console.log("Voice recognition started. Try saying 'Hey Jarvis'.");
                 
-            };
+    //         };
             
-            recognition.onresult = async (event) => {
+    //         recognition.onresult = async (event) => {
                
-                const transcript = event.results[event.results.length - 1][0].transcript.trim();
-                setTranscript(transcript)
+    //             const transcript = event.results[event.results.length - 1][0].transcript.trim();
+    //             setTranscript(transcript)
                 
 
-                let currentMessages = messages;
-                if(messages !== null){
+    //             let currentMessages = messages;
+    //             if(messages !== null){
                     
-                      setMessages(prev => [...prev, { content: transcript, sender: 'human' }]);
-                }else{
-                    setMessages([{ content: transcript, sender: 'human' }]);
-                }
+    //                   setMessages(prev => [...prev, { content: transcript, sender: 'human' }]);
+    //             }else{
+    //                 setMessages([{ content: transcript, sender: 'human' }]);
+    //             }
              
-                await  saveMessage(transcript,'human',false)
+    //             await  saveMessage(transcript,'human',false)
 
-                let askAI = await queryAI(transcript);
+    //             let askAI = await queryAI(transcript);
              
-                console.log('asked ai',askAI);
+    //             console.log('asked ai',askAI);
             
                
-                if(askAI){
+    //             if(askAI){
 
-                    recognition.stop();
+    //                 recognition.stop();
                     
                     
-                    const utterance = new SpeechSynthesisUtterance(askAI);
-                    utterance.lang = 'en-US';
-                    speechSynthesis.speak(utterance);
+    //                 const utterance = new SpeechSynthesisUtterance(askAI);
+    //                 utterance.lang = 'en-US';
+    //                 speechSynthesis.speak(utterance);
                            
 
             
-                }
+    //             }
     
         
-            };
+    //         };
         
                
                 
-            recognition.onend = () => {
+    //         recognition.onend = () => {
             
-                recognition.start(); // Restart recognition if it ends
-            };
+    //             recognition.start(); // Restart recognition if it ends
+    //         };
                 
-            // Start listening
-            recognition.start();
-            recognitionRef.current = recognition;
+    //         // Start listening
+    //         recognition.start();
+    //         recognitionRef.current = recognition;
             
-            return () => {
-                recognition.stop(); // Stop recognition when the component unmounts
-            };
+    //         return () => {
+    //             recognition.stop(); // Stop recognition when the component unmounts
+    //         };
 
-        } else {
-             console.warn("This browser does not support the Web Speech API.");
+    //     } else {
+    //          console.warn("This browser does not support the Web Speech API.");
+    //     }
+    // }
+
+    let speechRecognition = async (action)=>{
+
+
+        if(action === true){
+            stopListening();
+            setMute(action);
+    
+
+        }else{
+         
+            startListening();
+            setMute(action);
+
         }
     }
 
-    
-    
-    const updateListening = (action) => {
-    
-      
-        if (action === true && recognitionRef.current) {
-           
-            recognitionRef.current.stop();
-         
-            setMute(!mute);
 
-        }else if(action === false && recognitionRef.current){
-            recognitionRef.current.start();
-            console.log("unmuting");
-          
-            setMute(!mute);
+    useEffect(()=>{
+        if (!transcription) return;
 
+        const handleTranscript = async ()=>{
+            let currentMessages = messages;
+            if(messages !== null){
+                setMessages(prev => [...prev, { content: transcription, sender: 'human' }]);
+            }else{
+                setMessages([{ content: transcription, sender: 'human' }]);
+            }
+
+            await  saveMessage(transcription,'human',false)
+
+            let askAI = await queryAI(transcription);
+
+            if(askAI){
+                console.log('try to speak',askAI);
+                const utterance = new SpeechSynthesisUtterance(askAI);
+                utterance.lang = 'en-US';
+                speechSynthesis.cancel(); // Cancel any existing speech
+                speechSynthesis.speak(utterance);   
+            }
         }
-    };
+        handleTranscript();
+    },[transcription]);
+
     
+    
+    const handleVoiceModeActivation = async ()=>{
+        // setVoiceMode(!voiceMode);
+      if(voiceMode === false){
+       
+        startListening();
+        setVoiceMode(!voiceMode);
+
+      }else{
+        setVoiceMode(!voiceMode);
+      }
+        
+    }
+
+    const handleDraftMode = ()=>{
+        setDraftScreen(!draftScreen);
+        if(legalDraftMessages && legalDraftMessages.length >= 1){
+            return;
+        }else{
+            let messageData = {
+                title:'What would you like?',
+                buttons:['create new draft','add new draft']
+            }
+
+            setLegalDraftMessages([messageData]);
+        }
+    }
+
+    const handleAddNewDraft = async ()=>{
+        let messageData = {
+            title:"What's the case about?",
+            textArea:['describe case'],
+            buttons:['Create Draft']
+        };
+
+        setLegalDraftMessages(prev =>[...prev,messageData]);
+    };
+
+
+
+    const handleFindDraft = async (e)=>{
+        // if(e.key === 'Enter'){
+            const request = await fetch(`/api/pinecone/fetchdraft`,{
+                method:'POST',
+                headers:{
+                'Content-Type':'application/JSON'
+                },
+                body:JSON.stringify({
+                    query:searchDraft
+                })
+            });
+
+            const result = await request.json();
+            if(request.ok){
+                let messageData = {
+                    title:`Draft Generated`,
+                    draft:`${result.draft.content}`
+                    
+                };
+                setLegalDraftMessages(prev =>[...prev,messageData]);
+            }
+            // console.log('result',result.draft.content);
+        // }
+    };
+
+    const handleDraftSearchInput = (e)=>{
+        let queryValue = String(e.target.value);
+        setSearchDraft(queryValue);
+    }
+
+
+
+
+
+    //custom draft adding mechanism
+
+    
+    const handleAddCustomDraft = async (name,type)=>{
+
+
+        draftFileRef.current.click();
+
+        let messageData = {
+            title:"What's the title of your draft?",
+            textArea:['custom draft'],
+            buttons:['Upload Draft']
+        };
+
+        setLegalDraftMessages(prev =>[...prev,messageData]);
+
+
+
+
+
+
+    };
+
+    const saveCustomDraft = async ()=>{
+
+        const { default: pdfToText } = await import('react-pdftotext');
+
+        const text = await pdfToText(draftFile);
+
+        const request = await fetch(`/api/pinecone/adddraft`,{
+            method:'POST',
+            headers:{
+               'Content-Type':'application/JSON'
+            },
+            body:JSON.stringify({
+                name:searchDraft,
+                type:'custom',
+                content:text
+            })
+        });
+
+        if(request.ok){
+            setSearchDraft('');
+        }
+
+    }
+
+   
+
+    const handleDraftFileChange = (event)=>{
+
+        const file = event.target.files[0];
+            
+
+        // Check if the selected file is an image
+        if (file && file.type === 'application/pdf') {
+          
+            setDraftFile(file);
+           
+        } else {
+            console.error('Please select a valid image file');
+        
+        }
+
+    }
+
+
+
+
 
     return(
         <>
@@ -586,7 +767,7 @@ export default function Chat(){
             <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Istok+Web:ital,wght@0,400;0,700;1,400;1,700&family=Joan&display=swap" rel="stylesheet"></link>
             </Head>
             <div className={styles.container}>
-                    {voiceMode === false &&
+                    {voiceMode === false && draftScreen === false &&
                         <div className={styles.leftSection}>
                             <div className={styles.leftSection_top}>
                                 <h2 className={styles.leftSection_header}>Research History</h2>
@@ -597,11 +778,11 @@ export default function Chat(){
                         
                             <div className={styles.leftSection_history}>
                                 {userData && conversations && conversations.map((i,index)=>{
-                                    // console.log(i);
+                            
                                     return(
                                 
-                                        <Link href={`/research/${i._id}`} className={styles.leftSection_history_convo}>
-                                        <p>{i.title.slice(0,25)}..</p>
+                                        <Link href={`/research/${i._id}`} className={styles.leftSection_history_convo} key={index}>
+                                            <p>{i.title.slice(0,25)}..</p>
                                         </Link>
                                 
                                     )
@@ -625,7 +806,7 @@ export default function Chat(){
                                         {messages && messages.length >= 1 &&  messages.map((i,index)=>{
                                             return(
                                                 <>
-                                                    <div className={styles.message_div}>
+                                                    <div className={styles.message_div} key={index}>
                                                     
                                                         {messages[index].sender === 'human' ?
                                                             <div className={styles.message_content}>
@@ -712,7 +893,7 @@ export default function Chat(){
                                                         <img src={'/plus.png'} width={35} height={35}/>
                                                     </button>
 
-                                                    <button className={styles.rightSection_inputDiv_draftButton} onClick={()=>setDraftScreen(!draftScreen)}>
+                                                    <button className={styles.rightSection_inputDiv_draftButton} onClick={()=>handleDraftMode()}>
                                                             <img src={'/legal_work.png'} className={styles.draftButton_image} width={20} height={20}/>
                                                             <p className={styles.draftButton_text}>legal draft</p>
                                                     </button>
@@ -722,7 +903,7 @@ export default function Chat(){
                                             <div className={styles.rightSection_inputDiv_tools_right}>
 
                                                 
-                                                <button className={styles.rightSection_inputDiv_voiceButton} onClick={()=>setVoiceMode(!voiceMode)}>
+                                                <button className={styles.rightSection_inputDiv_voiceButton} onClick={()=>handleVoiceModeActivation()}>
                                                     <img src={'/sound-recognition.png'} width={30} height={30}/>
                                                 </button>
 
@@ -736,6 +917,10 @@ export default function Chat(){
                                         
                                     </div>
                             </div>
+
+
+                            
+                            
                             
                     </div>
 
@@ -748,15 +933,15 @@ export default function Chat(){
 
                                     <div className={styles.voiceSection_bottom}>
 
-                                            <button className={styles.voiceSection_voiceButton} onClick={()=>speech()}>
+                                            <button className={styles.voiceSection_voiceButton} >
 
                                             </button>
 
-                                            <p className={styles.voiceSection_voiceTranscript}>{transcript.slice(0,45)}</p>
+                                            <p className={styles.voiceSection_voiceTranscript}>{transcription.slice(0,35)}</p>
 
                                     </div>
                                     <div className={styles.voiceSection_controls}>
-                                            <button className={styles.voiceSection_micButton} onClick={()=>updateListening(!mute)}>
+                                            <button className={styles.voiceSection_micButton} onClick={()=>speechRecognition(!mute)}>
                                                 <img src={mute ? '/mute.png' :'/unmute.png'} width={35} height={35}/>
                                             </button>
 
@@ -766,6 +951,103 @@ export default function Chat(){
 
                                     </div>    
                         </div>
+                    }
+
+                    {draftScreen && 
+                            
+                            <div className={styles.draftSection}>
+                                
+
+                                <div className={styles.draftSection_top}>
+                                    <p className={styles.draftSection_top_header}>Draft Mode</p>
+                                </div>
+
+                                <div className={styles.draftSection_body}>
+                                  
+                                    {legalDraftMessages.length >=1 && legalDraftMessages.map((value,index)=>{
+                                       
+                                        return(
+
+                                            <motion.div   initial={{ opacity: 0, scale: 0.8, y: 50 }} // Start slightly smaller and lower
+                                            whileInView={{ opacity: 1, scale: 1, y: 0 }} // Pop up to normal size
+                                            transition={{ duration: 0.6, ease: "easeOut" }} className={styles.draftSection_body_message} key={index}>
+
+                                                <div className={styles.draftSection_body_message_top}>
+                                                    <div className={styles.draftSection_body_message_logo}>
+                                                        <img src={'/bot.png'} width={30} height={30}/>
+                                                    </div>
+                                                    <p className={styles.draftSection_body_message_top_header}>{legalDraftMessages[index].title}</p>
+                                                </div>
+
+                                                {legalDraftMessages[index].draft &&
+                                                    <div className={styles.draftSection_body_message_draft}>
+                                                            <p>{legalDraftMessages[index].draft}</p>
+                                                    </div>
+                                                }
+
+                                                {legalDraftMessages[index].buttons &&  legalDraftMessages[index].buttons.length === 2 && 
+                                                    <div className={styles.draftSection_body_message_content}>
+                                                        
+                                                    
+
+
+                                                        <button className={styles.draftSection_body_message_button} onClick={()=>handleAddNewDraft()}>
+                                                                <p>Create new draft</p>
+                                                        </button>   
+
+                                                        <input type='file' className={styles.rightSection_inputDiv_file} ref={draftFileRef} onChange={(e)=>handleDraftFileChange(e)}/>
+                                                        <button className={styles.draftSection_body_message_button} onClick={()=>handleAddCustomDraft('bail in criminal case','custom')}>
+                                                                <p>Add custom draft</p>
+                                                        </button>   
+                                                    
+
+                                                    </div>
+                                                }
+
+                                                {legalDraftMessages[index].textArea && legalDraftMessages[index].textArea.length >=1 &&
+                                                   <textarea placeholder={legalDraftMessages[index].textArea[0]} className={styles.draftSection_body_textArea}   onChange={handleDraftSearchInput}/>
+
+                                                }
+
+                                                {
+                                                    legalDraftMessages[index].buttons && legalDraftMessages[index].buttons.length === 1 && legalDraftMessages[index].buttons[0] === 'Upload Draft' &&
+                                                    <div className={styles.draftSection_body_message_content}>
+                                                         <button className={styles.draftSection_body_message_button} onClick={()=>saveCustomDraft()}>
+                                                                <p>Upload Draft</p>
+                                                        </button>   
+                                                    </div>
+                                                }
+
+                                                {
+                                                    legalDraftMessages[index].buttons && legalDraftMessages[index].buttons.length === 1 && legalDraftMessages[index].buttons[0] === 'Create Draft' &&
+                                                    <div className={styles.draftSection_body_message_content}>
+                                                            <button className={styles.draftSection_body_message_button} onClick={()=>handleFindDraft()}>
+                                                                <p>Create Draft</p>
+                                                        </button>   
+                                                    </div>
+                                                }
+
+                                                
+                                            </motion.div>
+
+
+                                        )
+                                    })}
+                                        
+                                </div> 
+
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                     }
             </div>
         </>

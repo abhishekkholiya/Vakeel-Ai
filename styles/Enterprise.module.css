@@ -1,0 +1,200 @@
+.container {
+    min-height: 100vh;
+    padding: 3rem 4rem;
+    background: url('/backgroundenterprise.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+  }
+  
+  .welcomeSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .profilePic {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .welcomeText h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .welcomeText p {
+    margin-top: 0.15rem;
+  
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mainContent {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  
+  .metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .metricCard {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 180px;
+  }
+  
+  .metricCard:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .iconContainer {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .iconContainer img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .metricContent h3 {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+    color: black;
+    margin-bottom:0.5rem;
+    font-weight: 500;
+  }
+  
+  .number {
+    
+    font-size: 2rem;
+    font-weight: 500;
+  }
+  
+  .membersSection {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 15rem);
+    overflow-y: auto;
+    border: 1px solid black;
+  }
+  
+  .membersSection::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .membersSection::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  
+  .membersSection::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+  
+  .membersSection::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  
+  .membersSection h2 {
+    margin: 0 0 1rem 0;
+    font-weight: 500;
+  }
+  
+  .membersList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .memberCard {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    border: 1px solid black;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .memberCard:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+  }
+  
+  .memberAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .memberInfo h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: black;
+    font-weight: 500;
+  }
+  
+  .memberInfo p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.9rem;
+    color: black;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .metricsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .welcomeText h1 {
+      font-size: 1.5rem;
+    }
+    
+    .number {
+      font-size: 1.5rem;
+    }
+  }

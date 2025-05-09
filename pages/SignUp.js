@@ -79,7 +79,7 @@ export default function SignUp() {
                     <div className={styles.loginCard}>
                         <div className={styles.logo}>
                         <Image
-                            src="/advocate.png"
+                            src="/logo.png"
                             alt="Vakeel AI Logo"
                             width={120}
                             height={120}

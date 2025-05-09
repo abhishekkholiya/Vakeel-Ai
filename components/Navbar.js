@@ -12,7 +12,7 @@ export default function Navbar(){
             <div className={styles.navbar}>
                 <div className={styles.navbar_left_content}>
                     <div className={styles.logo_container}>
-                            <img src='/advocate.png' width={35} height={35}/>
+                            <img src='/logo.png' width={35} height={35}/>
                             <h2 className={styles.logo_container_header}>Vakeel Ai</h2>
                     </div>
                 </div>

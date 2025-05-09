@@ -10,7 +10,7 @@ export default function Footer (){
                 <div className={styles.footerDiv_top_left}>
                         <div className={styles.left_body}>
                                 <div className={styles.logo_div}>
-                                    <img src='/advocate.png' className={styles.logo_image} width={50} height={50}/>
+                                    <img src='/logo.png' className={styles.logo_image} width={50} height={50}/>
                                   
                                 </div>
                                
