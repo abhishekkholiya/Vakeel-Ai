@@ -1,5 +1,5 @@
-import dbConnect from "@/lib/mongodb";
-import MessageSchema from "@/models/message";
+import dbConnect from "../../../lib/mongodb";
+import MessageSchema from "../../../models/message";
 const handler = async (req,res)=>{
     try{
 

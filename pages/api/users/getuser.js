@@ -1,5 +1,5 @@
-import User from '@/models/user.js';
-import dbConnect from '@/lib/mongodb';
+import User from '../../../models/User';
+import dbConnect from "../../../lib/mongodb";
 const handler = async (req,res)=>{
     try{
         await dbConnect();

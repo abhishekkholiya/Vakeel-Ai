@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import crypto from 'crypto';
 
 import { getOrCreateIndex } from "@/pinecone/config";
-import DraftSchema from '@/models/draft';
+import DraftSchema from '../../../models/draft';
 
 export default async function handler (req,res){
 

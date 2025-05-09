@@ -1,7 +1,7 @@
 // Your handler file
-import dbConnect from '@/lib/mongodb';
+import dbConnect from "../../../lib/mongodb";
 // import getMessageModel from '../../Models.js/getMessageModel';
-import Conversation from '@/models/conversation';
+import Conversation from '../../../models/conversation';
 
 const handler = async (req, res) => {
     await dbConnect();

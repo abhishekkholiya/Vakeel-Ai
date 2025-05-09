@@ -1,7 +1,7 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
 import crypto from 'crypto';
-import DraftSchema from '@/models/draft';
+import DraftSchema from '../../../models/draft';
 import { getOrCreateIndex } from "@/pinecone/config";
 
 

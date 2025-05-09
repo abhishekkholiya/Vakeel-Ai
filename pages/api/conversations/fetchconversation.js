@@ -1,5 +1,5 @@
-import dbConnect from "@/lib/mongodb";
-import Conversation from "@/models/conversation";
+import dbConnect from "../../../lib/mongodb";
+import Conversation from "../../../models/conversation";
 const handler = async (req,res)=>{
     try{
 

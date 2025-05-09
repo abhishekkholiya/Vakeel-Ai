@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from '@/models/user.js';
+import User from '../../../models/User';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
