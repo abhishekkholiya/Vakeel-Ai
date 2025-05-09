@@ -418,7 +418,7 @@ export default function Chat(){
                     setMessages(newMessages);
                 }
 
-                // console.log("newCases that was set:", newCases); 
+             
                 setDisableInput(false);
                 return 'Here is what I found about the case';
 
@@ -501,7 +501,7 @@ export default function Chat(){
     //     if (SpeechRecognition) {
 
 
-    //         // console.log('listening');
+    //      
     //         let recognition = new SpeechRecognition();
     //         recognition.continuous = true; 
     //         recognition.interimResults = false; 
@@ -510,7 +510,7 @@ export default function Chat(){
     //         recognitionRef.current = recognition;
             
     //         recognition.onstart = () => {
-    //             console.log("Voice recognition started. Try saying 'Hey Jarvis'.");
+    //    
                 
     //         };
             
@@ -532,7 +532,7 @@ export default function Chat(){
 
     //             let askAI = await queryAI(transcript);
              
-    //             console.log('asked ai',askAI);
+    //         
             
                
     //             if(askAI){
@@ -676,8 +676,8 @@ export default function Chat(){
                 };
                 setLegalDraftMessages(prev =>[...prev,messageData]);
             }
-            // console.log('result',result.draft.content);
-        // }
+          
+      
     };
 
     const handleDraftSearchInput = (e)=>{
